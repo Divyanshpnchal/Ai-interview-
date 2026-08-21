@@ -1,18 +1,19 @@
 
 import "../styles/globals.css"
-import { Input } from "./components/ui/input";
-import { Button } from "./components/ui/button";
+import { BrowserRouter, Routes, Route } from "react-router"
 
+import { Interviewsetup } from "./pages/Interviewsetup";
+import { Landing } from "./pages/Landing";
 
 export function App() {
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <div>
-        <Input></Input>
-        <Input></Input>
-        <Button>Start Interview</Button>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing></Landing>}/>
+        <Route path="/interviewsetup" element={<Interviewsetup />} />
+      </Routes>
+
+    </BrowserRouter>
   );
 }
 
