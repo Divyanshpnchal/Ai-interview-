@@ -2,17 +2,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
+import axios from "axios";
 
+
+   const BACKEND_URL = import.meta.env.BUN_PUBLIC_BACKEND_URL;
 
 export function Interviewsetup(){
     const [gitlink , setGitlink ] = useState("");
     const [Linkedin , setLinkedin ] = useState("");
 
-    function handleclick(){
+    async function handleclick(){
         if(!gitlink  || !Linkedin ){
             toast.error("Please fill the fields")
             return ;
         }
+        
+        try{
+            const responce = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`)
+            
+        }   
+        catch{
+            
+        }
+
         
     }
     
