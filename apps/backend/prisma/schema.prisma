@@ -13,3 +13,37 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model Interview {
+  id         Int              @id @default(autoincrement())
+  githubData Json
+  status     InterviewStatus  
+  score      Int?
+  feedback   String?
+  createdAt  DateTime         @default(now())
+  messages   Message[]        
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  interviewID Int
+  interview   Interview @relation(fields: [interviewID], references: [id])
+  type        Type      
+  content     String
+  createdAt   DateTime  @default(now())
+}
+
+
+
+enum InterviewStatus   {
+  pre 
+  Inprogress 
+  Done 
+}
+
+
+enum Type {
+  user 
+  assistand 
+}
