@@ -1,15 +1,33 @@
 import express from "express";
-
+import cors from "cors";
+import schemadesign from "./type";
+import {gitdetails} from "./scrapper/github"
 
 const app = express();
 app.use(express.json());
-app.listen(3001);
 
-app.post("/api/v1/pre-interview" , (req,res)=>{
-    res.status(201);
-    return res.json({
-        Message : "working "
-    })
-})
+app.use(cors());
+app.post("/api/v1/pre-interview", async (req, res) => {
+    const { data, success, error } = schemadesign.safeParse(req.body);
+    if (!success) {
+        console.log(error.issues); 
+        res.status(401).json({ message: "invalid link" });
+        return;
+    }
+
+    const gitlink =  new URL(data.gitlink) ;
+    const username: string = gitlink.pathname.split("/").filter(Boolean)[0] ?? "";
+    
+    const userdetails = gitdetails(username);
+    
+    
+    
+        
+    
+
+});
 
 
+
+
+app.listen(3001, () => console.log("Backend running on port 3001"));

@@ -17,18 +17,10 @@ export function Interviewsetup(){
         }
         
         try{
-            const responce = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`,{
-                gitlink 
-               
-            }
-            
-            ) 
-            
-
-            
-        }   
+            const response = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`)
+        }
         catch{
-            
+
         }
 
         
