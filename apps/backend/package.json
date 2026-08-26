@@ -12,9 +12,16 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "axios": "^1.19.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "pg": "^8.23.0",
+    "prisma": "^8.0.0-rc.10",
     "zod": "^4.4.3"
+  },
+  "scripts": {
+    "postinstall": "prisma skills sync || exit 0"
   }
 }
