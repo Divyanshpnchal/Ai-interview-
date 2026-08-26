@@ -17,8 +17,16 @@ app.post("/api/v1/pre-interview", async (req, res) => {
 
     const gitlink =  new URL(data.gitlink) ;
     const username: string = gitlink.pathname.split("/").filter(Boolean)[0] ?? "";
+
+    try{
+        const userdetails = await gitdetails(username);
+        res.status(201).json({message : "got the request "});
+    }
+    catch(error){
+        res.status(401).json({message : "Something went wrong "});
+        return ;
+    }
     
-    const userdetails = gitdetails(username);
     
     
     
