@@ -23,7 +23,7 @@ app.post("/api/v1/pre-interview", async (req, res) => {
 
     try{
         const userdetails = await gitdetails(username);
-        const newinterview = await prisma.Interview.create({
+        const newinterview = await prisma.interview.create({
             data:{
                 githubData : userdetails
             }

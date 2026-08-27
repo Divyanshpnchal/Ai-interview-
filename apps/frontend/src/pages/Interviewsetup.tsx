@@ -15,12 +15,14 @@ export function Interviewsetup(){
             toast.error("Please fill the fields")
             return ;
         }
-        
         try{
-            const response = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`)
+            const response = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`,{
+                gitlink: gitlink
+            }
+            )
         }
-        catch{
-
+        catch(error){
+            console.log(error);
         }
 
         
