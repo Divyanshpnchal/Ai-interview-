@@ -18,7 +18,7 @@ datasource db {
 model Interview {
   id         Int              @id @default(autoincrement())
   githubData Json
-  status     InterviewStatus  
+  status     InterviewStatus  @default(Pre)
   score      Int?
   feedback   String?
   createdAt  DateTime         @default(now())
@@ -36,14 +36,13 @@ model Message {
 
 
 
-enum InterviewStatus   {
-  pre 
-  Inprogress 
-  Done 
+enum InterviewStatus {
+  Pre
+  InProgress
+  Done
 }
 
-
 enum Type {
-  user 
-  assistand 
+  User
+  Assistant
 }

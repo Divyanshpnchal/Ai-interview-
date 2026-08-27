@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import schemadesign from "./type";
 import {gitdetails} from "./scrapper/github"
+import prisma from "./db";
+
 
 const app = express();
 app.use(express.json());
@@ -21,7 +23,15 @@ app.post("/api/v1/pre-interview", async (req, res) => {
 
     try{
         const userdetails = await gitdetails(username);
-        res.status(201).json({message : "got the request " , userdetails});
+        const newinterview = await prisma.Interview.create({
+            data:{
+                githubData : userdetails
+            }
+        })
+
+        res.status(201).json({message : "got the request " , id : newinterview.id});
+        
+
     }
     catch(error){
         res.status(401).json({message : "Something went wrong "  });
