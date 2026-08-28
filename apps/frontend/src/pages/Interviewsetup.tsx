@@ -3,12 +3,16 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 
 const BACKEND_URL = process.env.BUN_PUBLIC_BACKEND_URL;
+const navigate =  useNavigate();
+
 
 export function Interviewsetup(){
     const [gitlink , setGitlink ] = useState("");
+    
 
     async function handleclick(){
         if(!gitlink.trim()){
@@ -18,12 +22,18 @@ export function Interviewsetup(){
         try{
             const response = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`,{
                 gitlink: gitlink
-            }
+                }
             )
+            toast.success("Interview Created ");
+            const userid = response.data.id ;
+            navigate(`/interview/${userid}`);
+
         }
         catch(error){
             console.log(error);
+            toast.error("Something went wrong ..")
         }
+
 
         
     }

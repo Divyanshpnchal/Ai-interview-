@@ -28,7 +28,7 @@ app.post("/api/v1/pre-interview", async (req, res) => {
                 githubData : userdetails
             }
         })
-
+        
         res.status(201).json({message : "got the request " , id : newinterview.id});
         
 

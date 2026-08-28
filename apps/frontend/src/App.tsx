@@ -5,6 +5,7 @@ import { Toaster } from "sonner";
 
 import { Interviewsetup } from "./pages/Interviewsetup";
 import { Landing } from "./pages/Landing";
+import { Interview } from "./pages/interview";
 
 export function App() {
   return (
@@ -12,6 +13,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Landing></Landing>}/>
         <Route path="/interviewsetup" element={<Interviewsetup />} />
+        <Route path="/interview/:id" element={<Interview></Interview>}/>
         
       </Routes>
       <Toaster richColors  />
