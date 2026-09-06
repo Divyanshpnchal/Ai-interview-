@@ -1,6 +1,6 @@
 import axios from "axios";
-import { json } from "node:stream/consumers";
 import { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router";
 
 
 
@@ -11,10 +11,14 @@ export function Interview() {
     const audioelement = useRef<null| HTMLAudioElement>(null);
     const peerconnection = useRef<null| RTCPeerConnection>(null);
     
+    //getuserid 
+    const{id} = useParams<{id : string}>()
+
+
     //step1 : get the token 
     async function fetchtoken(){
         try{
-            const response = await axios.post("/token");
+            const response = await axios.post(`/api/v1/session/${id}`);
             const data = response.data;
             return data.value ;
 

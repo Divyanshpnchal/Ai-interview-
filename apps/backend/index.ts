@@ -10,17 +10,7 @@ const apiKey = process.env.CHATGPT_API;
 const app = express();
 app.use(express.json());
 
-const sessionConfig = JSON.stringify({
-    Session : {
-        type : "realtime" ,
-        model : "gpt-realtime-2.1",
-        audio:{
-            output:{
-                voice : "marin",
-            },
-        },
-    },
-});
+
 
 
 
@@ -59,8 +49,35 @@ app.post("/api/v1/pre-interview", async (req, res) => {
 });
 
 
-app.post("/token" , async(req,res)=>{
+app.post("/api/v1/session/:interviewId" , async(req,res)=>{
+    
     try{
+        const interviewId = Number(req.params.interviewId);
+        const interview = await prisma.interview.findUnique({
+            where : {id : interviewId},
+        })
+        if(!interview){
+            res.status(401).json({
+                message:"interview not found"
+            })
+            return ;    
+        }
+
+        const sessionConfig = JSON.stringify({
+            session : {
+                type : "realtime" ,
+                model : "gpt-realtime-2.1",
+                audio:{
+                    output:{
+                        voice : "marin",
+                    },
+                }, 
+                instructions: `You are an interview assistant. 
+                Use the following GitHub profile data to ask technical questions:
+                ${JSON.stringify(interview, null, 2)}`
+            },
+        });        
+
         const response = await axios.post("https://api.openai.com/v1/realtime/client_secrets" , sessionConfig , {
             headers : {
                 Authorization : `Bearer ${apiKey}`, 
