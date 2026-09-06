@@ -7,12 +7,12 @@ import { useNavigate } from "react-router";
 
 
 const BACKEND_URL = process.env.BUN_PUBLIC_BACKEND_URL;
-const navigate =  useNavigate();
+
 
 
 export function Interviewsetup(){
     const [gitlink , setGitlink ] = useState("");
-    
+    const navigate =  useNavigate();
 
     async function handleclick(){
         if(!gitlink.trim()){
