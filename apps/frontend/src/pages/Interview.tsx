@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router";
 
-
+const BACKEND_URL = process.env.BUN_PUBLIC_BACKEND_URL;
 
 
 
@@ -18,7 +18,7 @@ export function Interview() {
     //step1 : get the token 
     async function fetchtoken(){
         try{
-            const response = await axios.post(`/api/v1/session/${id}`);
+            const response = await axios.post(`${BACKEND_URL}/api/v1/session/${id}`);
             const data = response.data;
             return data.value ;
 
@@ -36,6 +36,7 @@ export function Interview() {
 
         //receiving the audio track 
         pc.ontrack = async (event)=>{
+            console.log("TRACK RECEIVED", event);
             const mediastream = event.streams[0];
             if(mediastream && audioelement.current){
                 audioelement.current.srcObject = mediastream ;
@@ -48,7 +49,8 @@ export function Interview() {
         if(track){
             pc.addTrack(track ,stream);
         }
-       
+        
+        startTranscription(stream);
         //create a channel to send data like text json etc 
         const dc = pc.createDataChannel("oai-channel") //this parameter is just a name for the channel there can be multiple channel so to recognise 
 
@@ -71,7 +73,9 @@ export function Interview() {
         const answer: RTCSessionDescriptionInit = {
         type: "answer", 
         sdp: await sdpResponse.text(),
-        };
+        };  
+
+
 
         await pc.setRemoteDescription(answer);
 
@@ -79,11 +83,51 @@ export function Interview() {
         //Step 7 (separate, comes after connection is live): sending/listening to events
         dc.addEventListener("message" , (e)=>{
             const data = JSON.parse(e.data);
-            console.log(data);
+            
+            if(data.type === "response.output_audio_transcript.done" ){
+                axios.post(`${BACKEND_URL}/api/v1/message/${id}` , {
+                    type : "Assistant",
+                    content : data.transcript,
+                })
+            }
+
+
         })
 
 
         
+    }
+
+
+    async function startTranscription(stream : MediaStream){
+        const token = await axios.post(`${BACKEND_URL}/api/v1/deepgram-token`);
+        const dgkey = token.data.access_token;
+
+        const socket = new WebSocket(`wss://api.deepgram.com/v1/listen?punctuate=true`, ["token" , dgkey ]);
+        socket.onopen= ()=>{
+            const recorder = new MediaRecorder(stream , { mimeType: "audio/webm" });
+            recorder.ondataavailable = (event) => {
+                if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+                    socket.send(event.data);
+                }
+            };
+            recorder.start(250);
+
+        }
+
+
+        socket.onmessage = (message) => {
+            const received = JSON.parse(message.data.toString());
+            const transcript = received.channel?.alternatives?.[0]?.transcript;
+
+            if (transcript && received.is_final) {
+                axios.post(`${BACKEND_URL}/api/v1/message/${id}`, {
+                    type: "User",
+                    content: transcript,
+                });
+            }
+        };
+
     }
 
     useEffect(()=>{
@@ -93,7 +137,7 @@ export function Interview() {
   return (
     <div>
       <h1>INTERVIEW IS STARTING</h1>
-      <audio ref={audioelement}></audio>
+      <audio ref={audioelement} autoPlay></audio>
     </div>
   );
 }

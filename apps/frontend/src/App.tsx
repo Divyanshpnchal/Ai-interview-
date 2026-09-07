@@ -5,8 +5,7 @@ import { Toaster } from "sonner";
 
 import { Interviewsetup } from "./pages/Interviewsetup";
 import { Landing } from "./pages/Landing";
-import { Interview } from "./pages/interview";
-
+import { Interview } from "./pages/Interview";
 export function App() {
   return (
     <BrowserRouter>

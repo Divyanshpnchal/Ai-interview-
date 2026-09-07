@@ -98,4 +98,58 @@ app.post("/api/v1/session/:interviewId" , async(req,res)=>{
 
 
 
+
+app.post("/api/v1/message/:interviewId" ,async (req,res)=>{
+
+    try{
+        const interviewId = Number(req.params.interviewId);
+        const {type , content} = req.body;
+
+        const message = await prisma.message.create({
+            data: {
+                interviewID: interviewId,
+                type: type,
+                content: content,
+            },
+        });
+
+        res.status(201).json({
+            message: "saved", data: message
+        })
+
+    }
+    catch(error){
+        res.status(401).json({
+            message : "something went wrong"
+        })
+    }
+
+
+})
+
+
+app.post("/api/v1/deepgram-token" , async (req,res)=>{
+    try{
+        const response = await axios.post(
+            "https://api.deepgram.com/v1/auth/tokens/grant",
+            {},
+            {headers:{Authorization:`Token ${process.env.DEEPGRAM_API_KEY}`}}
+
+        )
+
+        res.json(response.data);
+    }
+    catch(error){
+        console.error("something went wrong " , error);
+        res.status(404).json({
+            message : "problem with deepgram"
+        })
+    }
+
+
+
+})
+
+
+
 app.listen(3001, () => console.log("Backend running on port 3001"));
