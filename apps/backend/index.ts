@@ -131,7 +131,7 @@ app.post("/api/v1/message/:interviewId" ,async (req,res)=>{
 app.post("/api/v1/deepgram-token" , async (req,res)=>{
     try{
         const response = await axios.post(
-            "https://api.deepgram.com/v1/auth/tokens/grant",
+            "https://api.deepgram.com/v1/auth/grant",
             {},
             {headers:{Authorization:`Token ${process.env.DEEPGRAM_API_KEY}`}}
 
@@ -139,17 +139,36 @@ app.post("/api/v1/deepgram-token" , async (req,res)=>{
 
         res.json(response.data);
     }
-    catch(error){
-        console.error("something went wrong " , error);
-        res.status(404).json({
-            message : "problem with deepgram"
-        })
-    }
+    catch(error:any){
+        console.error("DEEPGRAM ERROR DETAILS:", error.response?.data, error.response?.status);
+        res.status(500).json({ message : "problem with deepgram" });
+        }
 
 
 
 })
 
+app.patch("/api/v1/interview/:id/end" , (req , res)=>{
 
+    try{
+        const id = Number(req.params.id);
+        const interview = prisma.interview.update({
+            where : {id : id},
+            data : {status:"Done"}
+        })
+
+        res.json({
+            message : "ended",
+            interview
+        })
+
+    }
+    catch(error){
+        console.error("problem with ending the interview" , error);
+        res.status(500).json("Could not end interview")
+    }
+
+
+})
 
 app.listen(3001, () => console.log("Backend running on port 3001"));
