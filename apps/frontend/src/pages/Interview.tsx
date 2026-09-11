@@ -154,12 +154,14 @@ export function Interview() {
     }
 
     async function endInterview() {
+        // close the connection 
         peerconnection.current?.close();
         deepgramsocket.current?.close();
 
+        // call the backend to end the result and update the status to complete in the backend 
         await axios.patch(`${BACKEND_URL}/api/v1/interview/${id}/end`);
 
-        
+        // navigate to the result page 
         navigate(`/result/${id}`);
     }
 

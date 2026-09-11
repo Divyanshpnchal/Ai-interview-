@@ -171,4 +171,37 @@ app.patch("/api/v1/interview/:id/end" , (req , res)=>{
 
 })
 
+
+
+// fetch the messages for the results 
+app.get("/api/v1/result/:id" , async(req ,res)=>{
+    try{
+        const id = Number(req.params.id)
+        const interview = await prisma.interview.findUnique({
+            where: { id },
+            include: {
+                messages: {
+                    orderBy: { createdAt: "asc" },
+                },
+            },
+        });
+        if(!interview){
+            res.status(404).json({ message: "Interview not found" });
+        }
+
+        res.status(200).json(interview);
+
+
+    }
+    catch(error){
+        console.error("something went wrong while fetching the interview messages " , error);
+        res.status(500).json({
+            message : "something went wrong while fetching the interview messages "
+        })
+    }
+
+})
+
+
+
 app.listen(3001, () => console.log("Backend running on port 3001"));
