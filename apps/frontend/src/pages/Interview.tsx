@@ -73,7 +73,13 @@ export function Interview() {
             }
         };
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+            }
+        });        
         setUserStream(stream);
         const track = stream.getTracks()[0];
         if (track) {
@@ -119,7 +125,10 @@ export function Interview() {
         const token = await axios.post(`${BACKEND_URL}/api/v1/deepgram-token`);
         const dgkey = token.data.access_token;
 
-        const socket = new WebSocket(`wss://api.deepgram.com/v1/listen?punctuate=true`, ["bearer", dgkey]);
+        const socket = new WebSocket(
+            `wss://api.deepgram.com/v1/listen?punctuate=true&model=nova-2&language=en-US`,
+            ["bearer", dgkey]
+        );
         deepgramsocket.current = socket;
 
         socket.onopen = () => {
@@ -129,7 +138,7 @@ export function Interview() {
                     socket.send(event.data);
                 }
             };
-            recorder.start(250);
+            recorder.start(1000);
         };
 
         socket.onerror = (err) => {

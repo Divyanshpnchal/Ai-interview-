@@ -15,12 +15,16 @@ type MessageType = {
 export function Results() {
     const { id } = useParams<{ id: string }>();
     const [message, setMessage] = useState<MessageType[] | null>(null);
+    const [score , setScore] = useState<number | null>(null);
+    const [feedback , setFeedback] = useState<string | null>(null);
 
     async function fetchinterviewmessages() {
         try {
             const response = await axios.get(`${BACKEND_URL}/api/v1/result/${id}`);
             const messages = response.data.messages;
             setMessage(messages);
+            setScore(response.data.score);
+            setFeedback(response.data.feedback);
         } catch (error) {
             console.error("something got wrong while fetching the messages", error);
         }
@@ -33,6 +37,29 @@ export function Results() {
     return (
         <div className="h-screen w-screen bg-black text-white flex flex-col items-center overflow-hidden">
             <div className="w-full max-w-3xl flex flex-col flex-1 py-8 px-6 min-h-0">
+
+                {/* Score + Feedback card */}
+                <div className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
+                    {score === null && feedback === null ? (
+                        <p className="text-zinc-500 text-sm">Scoring in progress...</p>
+                    ) : (
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-center gap-3">
+                                <span className="text-3xl font-semibold text-white">
+                                    {score}
+                                    <span className="text-base font-normal text-zinc-500">/10</span>
+                                </span>
+                                <span className="text-xs uppercase tracking-wide text-zinc-500">
+                                    Interview Score
+                                </span>
+                            </div>
+                            <p className="text-sm leading-relaxed text-zinc-300">
+                                {feedback}
+                            </p>
+                        </div>
+                    )}
+                </div>
+
                 <h1 className="text-sm font-medium mb-6 text-zinc-500 uppercase tracking-wide">
                     Conversation
                 </h1>
